@@ -21,9 +21,9 @@ public class MyAdapter extends BaseExpandableListAdapter {
      private ArrayList<List<String>> children;
 
     public MyAdapter(Context context, List<String> groups, ArrayList<List<String>> children) {
-        this.context= context;
+        this.context = context;
         this.groups = groups;
-        this.children= children;
+        this.children = children;
     }
 
     @Override

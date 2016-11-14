@@ -1,17 +1,16 @@
 package com.example.jesper.lab2;
 
 
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 
 import android.widget.ExpandableListView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -52,29 +51,35 @@ public class MainActivity extends AppCompatActivity{
                 String in = s.toString();
 
                if(paths.contains(in)) {
-                   //Öppna gruppen
-                   //Markera barnet/elementet
-                   //expListView.expandGroup();
+
                    String[] split = in.split("/");
-                   for(int i = 0; i<groups.size(); i++) {
+
+                   for(int i = 0; i< groups.size(); i++) {
                        for (int j = 0; j < children.get(i).size(); j++) {
-                         //  System.out.println(groups.get(i) + " || " + children.get(i).get(j));
-                           //System.out.println(split[0] + " :: " + split[1] + " :: " + split[2]);
                            if(groups.get(i).equals(split[1]) && children.get(i).get(j).equals(split[2])) {
-                               //TODO: Markera barnet
-                                expListView.expandGroup(i);
-                               int index = expListView.getFlatListPosition(ExpandableListView.getPackedPositionForChild(i, j));
-                               System.out.println(index + expListView.get);
-                               expListView.setItemChecked(index, true);
+
+                               if(!expListView.isGroupExpanded(i))
+                                   expListView.expandGroup(i);
+                               setCurrentMarked(i, j);
+                               input.setBackgroundColor(Color.WHITE);
                                return;
                            }
                        }
                    }
+               } else {
+                   boolean possibru = false;
+                   for(String path: paths) {
+                       if(path.startsWith(in)) {
+                           possibru = true;
+                       }
+                   }
+                   if(possibru)
+                       input.setBackgroundColor(Color.WHITE);
+                   else {
+                       expListView.setItemChecked(-1, true);
+                       input.setBackgroundColor(Color.RED);
 
-                  // System.out.println(groups.indexOf("B"));
-               //    expListView.setSelectedChild(groups.indexOf(split[0]), children.get(groups.indexOf(split[0])).indexOf(split[1]), true);
-
-
+                   }
                }
 
             }
@@ -88,38 +93,32 @@ public class MainActivity extends AppCompatActivity{
                         // Ta bort textWatcher temporärt (så vi inte kollar saker två gånger)
                         input.removeTextChangedListener(textListener);
                         input.setText("/" + groups.get(groupPos) + "/" + children.get(groupPos).get(childPos) );
+                        input.setBackgroundColor(Color.WHITE);
                         input.addTextChangedListener(textListener);
 
-                        selectItem(groupPos, childPos, child);
+                        setCurrentMarked(groupPos, childPos);
 
                         return false;
                     }
                 }
         );
+    }
+
+    private void setCurrentMarked(int groupPos, int childPos) {
+
+        int index = expListView.getFlatListPosition(ExpandableListView.getPackedPositionForChild(groupPos, childPos));
+        System.out.println(index);
+        expListView.setItemChecked(index, true);
 
     }
 
-    private void deselectAll() {
-        //Gå igenom alla child och
-        //view.setBackgroundResourse(R.color.colorPrimary)
-        for(int i = 0; i < expListView.getChildCount(); i++){
-            expListView.getChildAt(i).setBackgroundResource(0);
-
-        }
-    }
-
-    private void selectItem(int groupPos, int childPos, View view) {
-        deselectAll();
-        expListView.setSelectedChild(groupPos, childPos, false);
-        view.setBackgroundResource(R.color.colorPrimaryDark);
-    }
     private void initData() {
 
-        String[] groupsArray = {"B", "B", "C"};
+        String[] groupsArray = {"apa",	"banan", "apa"};
         String[][] childrenArray = {
-                {"a", "b", "c"},
-                {"c"},
-                {"d"}
+                {"harambe", "nicke", "king", "kong"},
+                {"gul", "integul", "omogen"},
+                {"harambe", "bing", "kong"}
         };
 
         groups = Arrays.asList(groupsArray);
@@ -137,8 +136,4 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    protected boolean validInput(String in) {
-
-        return false;
-    }
 }
