@@ -1,7 +1,7 @@
 package com.example.jesper.lab3;
 
 /**
- * Created by Jesper on 2016-11-14.
+ * Created by Jesper & Samuel on 2016-11-14.
  */
 
 import android.os.AsyncTask;
@@ -55,11 +55,15 @@ class WordGetter extends AsyncTask<String, Void, String> {
             JSONObject json = new JSONObject(results);
             int id = json.getInt("id");
             JSONArray names = json.getJSONArray("result");
-
-            if(id > searcher.getMaxId()){
+            System.out.println("i" +  id + " c" + searcher.getCurrId() );
+            if(id >= searcher.getCurrId()){
                 //Suggestiongrejer
-                searcher.setMaxId(id);
+                searcher.setCurrId(id);
+
+                System.out.println("Hej din släkting");
+                searcher.setSuggestions(names);
             }
+            // else doNothing
 
         } catch (JSONException e) {
             e.printStackTrace();

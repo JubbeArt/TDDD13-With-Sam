@@ -6,60 +6,66 @@ import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import org.json.JSONArray;
+
+import static android.text.InputType.TYPE_CLASS_TEXT;
+
 /**
- * Created by Jesper on 2016-11-12.
+ * Created by Jesper & Samuel on 2016-11-12.
  */
 
-/** TODO:
-* Skapa sökruta
-* Leta efter förslag
-* Hämta (rätt) suggestions
-* */
 public class InteractiveSearcher extends LinearLayout {
     private EditText editText;
     private Suggestions suggestions;
-    private String[] names;
-    private int maxId = 0, currId = 0;
+    private int maxId = 0, currId = -1;
 
     private LayoutParams matchAndWrap = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-    private LayoutParams wrapAndWrap = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-
 
     public InteractiveSearcher(Context context){
         super(context);
         editText = new EditText(context);
+        editText.setMaxLines(1);
+        editText.setInputType(TYPE_CLASS_TEXT);
 
         setOrientation(VERTICAL);
         setLayoutParams(matchAndWrap);
         addView(editText);
 
+        suggestions = new Suggestions(context, this);
+        addView(suggestions);
         editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
                 //Be om suggestions
                 if(s.length() > 0) {
-                    new WordGetter(InteractiveSearcher.this).execute("http://flask-afteach.rhcloud.com/getnames/" + maxId + "/" + s);
+                    new WordGetter(InteractiveSearcher.this).execute(
+                            "http://flask-afteach.rhcloud.com/getnames/" + maxId + "/" + s
+                    );
                     maxId++;
-                }
+                } else
+                    setSuggestions(new JSONArray());
             }
         });
     }
 
-    public int getMaxId() {
-        return maxId;
+    public void setSuggestions(JSONArray names) {
+        suggestions.setSuggestions(names);
     }
 
-    public void setMaxId(int id){
-        maxId = id;
+    public int getCurrId() {
+        return currId;
     }
+
+    public void setCurrId(int id) {
+        currId = id;
+    }
+
+    public void setText(String word) {
+        editText.setText(word);
+        editText.setSelection(word.length());
+    }
+
 }
