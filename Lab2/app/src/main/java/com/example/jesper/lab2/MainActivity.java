@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity{
 
     Set<String> paths;
 
+    int currentGroup = -1, currentChild = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,36 +52,34 @@ public class MainActivity extends AppCompatActivity{
             public void afterTextChanged(Editable s) {
                 String in = s.toString();
 
-               if(paths.contains(in)) {
+                // Found exact match
+                if(paths.contains(in)) {
 
                    String[] split = in.split("/");
 
-                   for(int i = 0; i< groups.size(); i++) {
+                    // Find first right node
+                    for(int i = 0; i< groups.size(); i++) {
                        for (int j = 0; j < children.get(i).size(); j++) {
                            if(groups.get(i).equals(split[1]) && children.get(i).get(j).equals(split[2])) {
-
-                               if(!expListView.isGroupExpanded(i))
-                                   expListView.expandGroup(i);
-                               setCurrentMarked(i, j);
+                               currentGroup = i;
+                               currentChild = j;
+                               expListView.expandGroup(i);
                                input.setBackgroundColor(Color.WHITE);
                                return;
                            }
                        }
                    }
-               } else {
-                   boolean possibru = false;
+               } else { // Might be an ok path
                    for(String path: paths) {
-                       if(path.startsWith(in)) {
-                           possibru = true;
+                       if(path.startsWith(in)) { // Substring = ok path
+                           input.setBackgroundColor(Color.WHITE);
+                           return;
                        }
                    }
-                   if(possibru)
-                       input.setBackgroundColor(Color.WHITE);
-                   else {
-                       expListView.setItemChecked(-1, true);
-                       input.setBackgroundColor(Color.RED);
 
-                   }
+                    // No substring found = bad path
+                   expListView.setItemChecked(-1, true);
+                   input.setBackgroundColor(Color.RED);
                }
 
             }
@@ -102,12 +102,38 @@ public class MainActivity extends AppCompatActivity{
                     }
                 }
         );
+
+        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+
+                // Collapse all other groups
+                for(int i = 0; i < groups.size(); i++) {
+                    if(i != groupPosition)
+                        expListView.collapseGroup(i);
+                }
+
+                // Remove all selected itmes
+                for(int i = 0; i < expListView.getChildCount(); i++)
+                    expListView.setItemChecked(i, false);
+
+                // Add the selected item if the group is right
+                if(currentGroup == groupPosition)
+                    setCurrentMarked(currentGroup, currentChild);
+
+
+            }
+        });
     }
 
     private void setCurrentMarked(int groupPos, int childPos) {
+        if(groupPos == -1)
+            return;
+
+        currentChild = childPos;
+        currentGroup = groupPos;
 
         int index = expListView.getFlatListPosition(ExpandableListView.getPackedPositionForChild(groupPos, childPos));
-        System.out.println(index);
         expListView.setItemChecked(index, true);
 
     }
