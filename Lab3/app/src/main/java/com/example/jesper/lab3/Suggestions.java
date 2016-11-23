@@ -21,7 +21,7 @@ public class Suggestions extends View{
 
     protected String[] names;
     protected InteractiveSearcher searcher;
-    protected int textSize = 80, textHeight, textWidth, width;
+    protected int textSize = 25, textHeight, textWidth, width;
     protected Paint textPaint, black;
 
     protected LinearLayout.LayoutParams zeroSize = new LinearLayout.LayoutParams(0,0);

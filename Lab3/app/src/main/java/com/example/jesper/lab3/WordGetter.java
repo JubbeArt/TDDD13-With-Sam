@@ -38,8 +38,6 @@ class WordGetter extends AsyncTask<String, Void, String> {
                 result += input;
             }
 
-            System.out.println("Result: " + result);
-
         } catch (Exception e){
             System.out.println(e);
         } finally {
@@ -55,12 +53,10 @@ class WordGetter extends AsyncTask<String, Void, String> {
             JSONObject json = new JSONObject(results);
             int id = json.getInt("id");
             JSONArray names = json.getJSONArray("result");
-            System.out.println("i" +  id + " c" + searcher.getCurrId() );
-            if(id >= searcher.getCurrId()){
+
+             if(id >= searcher.getCurrId()){
                 //Suggestiongrejer
                 searcher.setCurrId(id);
-
-                System.out.println("Hej din släkting");
                 searcher.setSuggestions(names);
             }
             // else doNothing
