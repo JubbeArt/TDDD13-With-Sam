@@ -7,7 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import org.json.JSONArray;
@@ -24,7 +24,7 @@ public class Suggestions extends View{
     protected int textSize = 25, textHeight, textWidth, width;
     protected Paint textPaint, black;
 
-    protected LinearLayout.LayoutParams zeroSize = new LinearLayout.LayoutParams(0,0);
+    protected FrameLayout.LayoutParams zeroSize = new FrameLayout.LayoutParams(1, 1);
 
     public Suggestions(Context context, final InteractiveSearcher searcher){
         super(context);
@@ -79,8 +79,7 @@ public class Suggestions extends View{
             return;
         }
         int height = 15 + textHeight * names.length;
-
-        setLayoutParams(new LinearLayout.LayoutParams(width, height));
+        setLayoutParams(new FrameLayout.LayoutParams(width, height));
         canvas.drawRect(0, 0, width, height, black);
 
         for (int i = 0; i < names.length; i++) {
