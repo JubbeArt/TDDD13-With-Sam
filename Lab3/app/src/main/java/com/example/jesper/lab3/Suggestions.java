@@ -21,7 +21,7 @@ public class Suggestions extends View{
 
     protected String[] names;
     protected InteractiveSearcher searcher;
-    protected int textSize = 25, textHeight, textWidth, width;
+    protected int textSize = 25, textHeight, textWidth, width, maxSuggestions = 10;;
     protected Paint textPaint, black;
 
     protected FrameLayout.LayoutParams zeroSize = new FrameLayout.LayoutParams(1, 1);
@@ -58,8 +58,10 @@ public class Suggestions extends View{
     }
 
     public void setSuggestions(JSONArray names){
-        this.names = new String[names.length()];
-        for(int i = 0; i < names.length(); i++){
+        int length = Math.min(names.length(), maxSuggestions);
+
+		this.names = new String[length];
+        for(int i = 0; i < length; i++){
             try {
                 this.names[i] = (String) names.get(i);
             } catch (JSONException e) {
@@ -86,4 +88,12 @@ public class Suggestions extends View{
             canvas.drawText(names[i], 0, textHeight * (i+1), textPaint);
         }
     }
+
+	public void setMaxSuggestions(int maxSuggestions) {
+		this.maxSuggestions = maxSuggestions;
+	}
+
+	public int getMaxSuggestions() {
+		return maxSuggestions;
+	}
 }

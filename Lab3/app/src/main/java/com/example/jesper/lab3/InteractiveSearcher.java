@@ -88,4 +88,12 @@ public class InteractiveSearcher extends LinearLayout {
         editText.setSelection(word.length());
     }
 
+    public void setMaxSuggestions(int maxSuggestions) {
+        suggestions.setMaxSuggestions(maxSuggestions);
+    }
+
+    public int getMaxSuggestions() {
+        return suggestions.getMaxSuggestions();
+    }
+
 }
